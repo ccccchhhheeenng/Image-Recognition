@@ -26,7 +26,7 @@ class DrawingApp:
         self.prob_label.pack(pady=5)
 
         self.last_x, self.last_y = None, None
-        self.classes = ['圓形', '三角形', '方形', '十字']
+        self.classes = ['圓形', '十字', '方形', '三角形']
 
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
