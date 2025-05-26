@@ -1,7 +1,11 @@
 import numpy as np
 import time
 import os
+import torch
 # 載入形狀影像資料
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+print("運算設備：", device)
+
 def load_shape_matrix(file):
     return np.loadtxt(file, delimiter=',')
 
@@ -26,7 +30,7 @@ def cross_entropy(y_true, y_pred):
 
 shapes = ['circle', 'cross', 'cube', 'triangle']
 subdir = 'grayscale'  # 假設所有形狀都在 "grayscale" 這個子目錄內
-num_shapes = 300
+num_shapes = 500
 
 # 讀取所有形狀的矩陣並展平
 inputs = np.array([
@@ -34,6 +38,8 @@ inputs = np.array([
     for shape in shapes
     for i in range(1, num_shapes + 1)
 ])
+tensor_inputs = torch.from_numpy(inputs)
+tensor_inputs = tensor_inputs.to(device)
 
 # 檢查輸出格式
 outputs = np.array([
@@ -41,7 +47,10 @@ outputs = np.array([
     for shape in shapes
     for _ in range(num_shapes)
 ])
-
+tensor_outputs = torch.from_numpy(outputs)
+tensor_outputs = tensor_outputs.to(device)
+inputs = inputs.to(torch.float32)
+outputs = outputs.to(torch.float32)
 # 網路參數
 np.random.seed(int(time.time()))
 input_layer_size = 4096
@@ -55,6 +64,15 @@ weights_hidden_output = np.random.randn(hidden_layer_size, output_layer_size) * 
 bias_hidden = np.random.uniform(size=(1, hidden_layer_size))
 bias_output = np.random.uniform(size=(1, output_layer_size))
 
+tensor_weights_input_hidden = torch.from_numpy(weights_input_hidden).float()
+tensor_weights_hidden_output = torch.from_numpy(weights_hidden_output).float()
+tensor_bias_hidden = torch.from_numpy(bias_hidden).float()
+tensor_bias_output = torch.from_numpy(bias_output).float()
+tensor_weights_input_hidden = tensor_weights_input_hidden.to(device)
+tensor_weights_hidden_output = tensor_weights_hidden_output.to(device)
+tensor_bias_hidden = tensor_bias_hidden.to(device)
+tensor_bias_output = tensor_bias_output.to(device)
+
 # 訓練參數
 learning_rate = 0.0001
 epochs = 2000
@@ -62,27 +80,24 @@ epochs = 2000
 # 訓練過程
 for epoch in range(epochs):
     # 前向傳遞
-    hidden_input = np.dot(inputs, weights_input_hidden) + bias_hidden
-    hidden_output = sigmoid(hidden_input)
-
-    final_input = np.dot(hidden_output, weights_hidden_output) + bias_output
-    final_output = softmax(final_input)
+    hidden_input = torch.matmul(tensor_inputs, tensor_weights_input_hidden) + tensor_bias_hidden
+    hidden_output = torch.sigmoid(hidden_input)
+    final_input = torch.matmul(hidden_output, tensor_weights_hidden_output) + tensor_bias_output
+    final_output = torch.nn.functional.softmax(final_input, dim=1)
 
     # 損失計算
-    loss = cross_entropy(outputs, final_output)
+    loss = torch.nn.functional.cross_entropy(final_output, outputs.to(device))
 
     # 反向傳遞（softmax + cross entropy 梯度簡化）
-    d_output = final_output - outputs
-    error_hidden = d_output.dot(weights_hidden_output.T)
-    d_hidden = error_hidden * sigmoid_derivative(hidden_output)
-
+    d_output = final_output - outputs.to(device)
+    error_hidden = torch.matmul(d_output, weights_hidden_output.T)
+    d_hidden = error_hidden * (hidden_output * (1 - hidden_output))  # sigmoid 微分
     # 更新權重與偏差
-    weights_hidden_output -= hidden_output.T.dot(d_output) * learning_rate
-    bias_output -= np.sum(d_output, axis=0, keepdims=True) * learning_rate
+    weights_hidden_output -= torch.matmul(hidden_output.T, d_output) * learning_rate
+    bias_output -= torch.sum(d_output, axis=0, keepdim=True) * learning_rate
 
-    weights_input_hidden -= inputs.T.dot(d_hidden) * learning_rate
-    bias_hidden -= np.sum(d_hidden, axis=0, keepdims=True) * learning_rate
-
+    weights_input_hidden -= torch.matmul(inputs.T, d_hidden) * learning_rate
+    bias_hidden -= torch.sum(d_hidden, axis=0, keepdim=True) * learning_rate
     # 列印訓練進度
     if epoch % 50 == 0:
         print(f"Epoch {epoch}, Loss: {loss:.4f}")
