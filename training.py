@@ -1,4 +1,3 @@
-
 import numpy as np
 import torch
 import os
@@ -36,7 +35,6 @@ tensor_inputs = torch.tensor(inputs, dtype=torch.float32).to(device)
 tensor_labels = torch.tensor(labels, dtype=torch.long).to(device)
 
 # 設定隱藏層大小和輸入、輸出層大小
-np.random.seed(int(time.time()))
 input_size = 4096
 hidden_size = 512
 output_size = 4
