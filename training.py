@@ -55,7 +55,7 @@ bias_output = bias_output.to(device)
 
 # 訓練參數(次數、學習率)
 learning_rate = 0.0015
-epochs = 50000
+epochs = 1000000
 
 # 訓練過程
 for epoch in range(epochs):

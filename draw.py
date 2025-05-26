@@ -8,10 +8,10 @@ class DrawingApp:
     def __init__(self, root):
         self.root = root
         self.root.title("畫一個圖（圓形、三角形、方形、十字）")
-        self.canvas = tk.Canvas(root, width=256, height=256, bg='white')
+        self.canvas = tk.Canvas(root, width=512, height=512, bg='white')
         self.canvas.pack(pady=10)
 
-        self.image = Image.new("L", (256, 256), 255)
+        self.image = Image.new("L", (512, 512), 255)
         self.draw = ImageDraw.Draw(self.image)
 
         self.canvas.bind("<B1-Motion>", self.paint)
@@ -51,7 +51,7 @@ class DrawingApp:
 
     def clear(self):
         self.canvas.delete("all")
-        self.image = Image.new("L", (256, 256), 255)
+        self.image = Image.new("L", (512, 512), 255)
         self.draw = ImageDraw.Draw(self.image)
         self.result_label.config(text="預測: None")
         self.prob_label.config(text="機率: None")
