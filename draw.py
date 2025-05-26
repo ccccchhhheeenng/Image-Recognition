@@ -64,7 +64,7 @@ class DrawingApp:
 
         # 前向傳播
         hidden_input = torch.matmul(image_tensor, self.weights_input_hidden) + self.bias_hidden
-        hidden_output = torch.sigmoid(hidden_input)
+        hidden_output = torch.relu(hidden_input)
         final_input = torch.matmul(hidden_output, self.weights_hidden_output) + self.bias_output
         final_output = torch.softmax(final_input, dim=1).cpu().numpy()[0]
 
