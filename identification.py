@@ -8,7 +8,7 @@ np.savetxt('image.txt', triangle, delimiter=',', fmt='%1d')
 # 載入 image
 
 image = np.loadtxt("image.txt", delimiter=',').flatten().reshape(1, -1)  # reshape 使其成為 2D
-a=["heart","star","circle","triangle"]
+a=["cube","cross","circle","triangle"]
 # 載入模型參數
 weights_input_hidden = np.loadtxt("weights_input_hidden.txt", delimiter=",")
 weights_hidden_output = np.loadtxt("weights_hidden_output.txt", delimiter=",")

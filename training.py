@@ -1,5 +1,6 @@
 import numpy as np
 import time
+import os
 # 載入形狀影像資料
 def load_shape_matrix(file):
     return np.loadtxt(file, delimiter=',')
@@ -23,41 +24,28 @@ def softmax(x):
 def cross_entropy(y_true, y_pred):
     return -np.sum(y_true * np.log(y_pred + 1e-9)) / y_true.shape[0]
 
-# 輸入與 one-hot 目標輸出
+shapes = ['circle', 'cross', 'cube', 'triangle']
+subdir = 'grayscale'  # 假設所有形狀都在 "grayscale" 這個子目錄內
+num_shapes = 300
+
+# 讀取所有形狀的矩陣並展平
 inputs = np.array([
-    load_shape_matrix('heart1.txt').flatten(),
-    load_shape_matrix('heart2.txt').flatten(),
-    load_shape_matrix('heart3.txt').flatten(),
-    load_shape_matrix('star1.txt').flatten(),
-    load_shape_matrix('star2.txt').flatten(),
-    load_shape_matrix('star3.txt').flatten(),
-    load_shape_matrix('circle1.txt').flatten(),
-    load_shape_matrix('circle2.txt').flatten(),
-    load_shape_matrix('circle3.txt').flatten(),
-    load_shape_matrix('triangle1.txt').flatten(),
-    load_shape_matrix('triangle2.txt').flatten(),
-    load_shape_matrix('triangle3.txt').flatten()
+    load_shape_matrix(os.path.join(shape, subdir, f'{shape}{i}.txt')).flatten()
+    for shape in shapes
+    for i in range(1, num_shapes + 1)
 ])
 
+# 檢查輸出格式
 outputs = np.array([
-    [1, 0, 0, 0],  # heart1
-    [1, 0, 0, 0],  # heart2
-    [1, 0, 0, 0],  # heart3
-    [0, 1, 0, 0],  # star
-    [0, 1, 0, 0],
-    [0, 1, 0, 0],
-    [0, 0, 1, 0], 
-    [0, 0, 1, 0],
-    [0, 0, 1, 0], # circle
-    [0, 0, 0, 1],   # triangle
-    [0, 0, 0, 1],
-    [0, 0, 0, 1]
+    [1 if j == shapes.index(shape) else 0 for j in range(len(shapes))]
+    for shape in shapes
+    for _ in range(num_shapes)
 ])
 
 # 網路參數
 np.random.seed(int(time.time()))
 input_layer_size = 4096
-hidden_layer_size = 64
+hidden_layer_size = 256
 
 output_layer_size = 4
 
@@ -68,8 +56,8 @@ bias_hidden = np.random.uniform(size=(1, hidden_layer_size))
 bias_output = np.random.uniform(size=(1, output_layer_size))
 
 # 訓練參數
-learning_rate = 0.01
-epochs = 50000
+learning_rate = 0.0001
+epochs = 2000
 
 # 訓練過程
 for epoch in range(epochs):
