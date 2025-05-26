@@ -39,7 +39,7 @@ tensor_labels = torch.tensor(labels, dtype=torch.long).to(device)
 # 網路參數
 np.random.seed(int(time.time()))
 input_size = 4096
-hidden_size = 256
+hidden_size = 512
 output_size = 4
 
 # 初始化權重與偏差
@@ -55,8 +55,8 @@ bias_hidden = bias_hidden.to(device)
 bias_output = bias_output.to(device)
 
 # 訓練參數
-learning_rate = 0.001
-epochs = 100000
+learning_rate = 0.0025
+epochs = 10000
 
 # 訓練過程
 for epoch in range(epochs):
