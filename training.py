@@ -1,3 +1,4 @@
+
 import numpy as np
 import torch
 import os
@@ -11,12 +12,10 @@ print("運算設備：", device)
 def load_shape_matrix(file):
     return np.loadtxt(file, delimiter=',')
 
-# 載入輸入影像（要預測的影像）
-
 # 形狀與資料設定
 shapes = ['circle', 'cross', 'cube', 'triangle']
 subdir = 'grayscale'
-num_shapes = 300
+num_shapes = 1000
 
 # 載入訓練資料
 inputs = np.array([
@@ -54,8 +53,8 @@ bias_hidden = bias_hidden.to(device)
 bias_output = bias_output.to(device)
 
 # 訓練參數
-learning_rate = 0.0025
-epochs = 10000
+learning_rate = 0.0015
+epochs = 50000
 
 # 訓練過程
 for epoch in range(epochs):
@@ -69,7 +68,7 @@ for epoch in range(epochs):
     loss.backward = None # 清除 PyTorch 的 autograd
     # Softmax + NLL 的梯度
     probs = torch.exp(final_output)
-    d_output = probs.clone()
+    d_output = probs
     d_output[range(len(tensor_labels)), tensor_labels] -= 1
     d_output /= len(tensor_labels)
 
@@ -77,8 +76,9 @@ for epoch in range(epochs):
     grad_weights_hidden_output = torch.matmul(hidden_output.T, d_output)
     grad_bias_output = torch.sum(d_output, dim=0, keepdim=True)
 
-    d_hidden = torch.matmul(d_output, weights_hidden_output.T)
-    d_hidden[hidden_output <= 0] = 0
+    d_hidden_linear = torch.matmul(d_output, weights_hidden_output.T)
+    d_hidden = d_hidden_linear * (hidden_output > 0).float()
+
     grad_weights_input_hidden = torch.matmul(tensor_inputs.T, d_hidden)
     grad_bias_hidden = torch.sum(d_hidden, dim=0, keepdim=True)
 
