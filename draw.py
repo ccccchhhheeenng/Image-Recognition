@@ -68,9 +68,10 @@ class DrawingApp:
         final_input = torch.matmul(hidden_output, self.weights_hidden_output) + self.bias_output
         final_output = torch.softmax(final_input, dim=1).cpu().numpy()[0]
 
-        predicted_class = np.argmax(final_output)
+        predicted_class = np.argmax(final_output) 
         self.result_label.config(text=f"預測: {self.classes[predicted_class]}")
-        self.prob_label.config(text=f"機率: {final_output}")
+        prob_text = ", ".join([f"{cls}: {prob * 100:.2f}%" for cls, prob in zip(self.classes, final_output)])
+        self.prob_label.config(text=f"機率: {prob_text}")
 
 if __name__ == "__main__":
     root = tk.Tk()
