@@ -36,7 +36,7 @@ tensor_labels = torch.tensor(labels, dtype=torch.long).to(device)
 
 # 設定隱藏層大小和輸入、輸出層大小
 input_size = 4096
-hidden_size = 512
+hidden_size = 2048
 output_size = 4
 
 # 初始化隱藏層和輸出層的權重與偏差
@@ -84,7 +84,6 @@ for epoch in range(epochs):
     # 每50次輸出一次損失
     if epoch % 50 == 0:
         print(f"Epoch {epoch}, Loss: {loss.item():.4f}")
-
 # 運算結束，儲存模型參數
 torch.save(weights_hidden_input.cpu(), "weights_hidden_input.pt")
 torch.save(weights_hidden_output.cpu(), "weights_hidden_output.pt")
