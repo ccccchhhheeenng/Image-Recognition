@@ -6,7 +6,9 @@ import time
 # 設定GPU為優先運算設備
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print("運算設備：", device)
-
+print("GPU 數量:", torch.cuda.device_count())
+print("目前使用的 GPU:", torch.cuda.current_device())
+print("GPU 名稱:", torch.cuda.get_device_name(0)) 
 # 讀資料的function
 def load_shape_matrix(file):
     return np.loadtxt(file, delimiter=',')
@@ -42,8 +44,8 @@ output_size = 4
 # 初始化隱藏層和輸出層的權重與偏差
 weights_hidden_input = torch.randn(input_size, hidden_size, dtype=torch.float32) * np.sqrt(1. / input_size)
 weights_hidden_output = torch.randn(hidden_size, output_size, dtype=torch.float32) * np.sqrt(1. / hidden_size)
-bias_hidden = torch.rand(1, hidden_size, dtype=torch.float32)
-bias_output = torch.rand(1, output_size, dtype=torch.float32)
+bias_hidden = torch.randn(1, hidden_size, dtype=torch.float32)
+bias_output = torch.randn(1, output_size, dtype=torch.float32)
 
 # 將隱藏層的矩陣和輸出層的矩陣移至裝置
 weights_hidden_input = weights_hidden_input.to(device)
