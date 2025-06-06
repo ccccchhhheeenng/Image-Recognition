@@ -35,11 +35,8 @@ python training.py
 ```
 Image-Recognition/
 │── temp/               # 存放輸入影像
-│── bias_hidden.pt      # 模型權重
-│── bias_hidden.txt     # 模型權重 (文字格式)
+│── training            #訓練
 │── draw.py             # 影像繪製程式
-│── recognize.py        # 影像辨識程式
-│── requirements.txt    # 依賴套件
 │── LICENSE            # 授權條款 (MIT)
 │── README.md          # 專案說明文件
 ```
