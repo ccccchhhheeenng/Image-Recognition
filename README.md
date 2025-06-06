@@ -35,7 +35,7 @@ python training.py
 ```
 Image-Recognition/
 │── temp/               # 存放輸入影像
-│── training            #訓練
+│── training            # 訓練
 │── draw.py             # 影像繪製程式
 │── LICENSE            # 授權條款 (MIT)
 │── README.md          # 專案說明文件
