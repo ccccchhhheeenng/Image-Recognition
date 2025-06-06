@@ -11,7 +11,7 @@
   - 三角形（triangle）
 - 支援 **灰階處理**（grayscale）
 - 使用 **PyTorch** 進行模型運算
-- 內含模型權重 (`bias_hidden.pt`, `bias_hidden.txt`)
+- 內含模型權重,可直接運行辨識
 
 ## ⚡ 安裝
 請確保您的環境中已安裝 Python和pip環境，如果需要訓練且設備支援cuda，建議先執行以下命令以安裝所需套件：
